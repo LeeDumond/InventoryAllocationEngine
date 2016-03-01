@@ -6,6 +6,6 @@ namespace InventoryAllocationEngine.Web.Models
    {
       public Guid Id { get; set; }
       public string Name { get; set; }
-      public int QuantityAvailable { get; set; } 
+      //public int QuantityAvailable { get; set; } 
    }
 }
