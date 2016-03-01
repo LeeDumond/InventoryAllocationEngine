@@ -1,0 +1,29 @@
+﻿@model IEnumerable<InventoryAllocationEngine.Web.Models.Customer>
+@{
+    ViewBag.Title = "Customers";
+}
+
+<h2 class="page-header">Customers</h2>
+
+<table class="table">
+   <thead>
+   <tr>
+      <th>
+         Name
+      </th>
+   </tr>
+   </thead>
+   <tbody>
+
+      @foreach (var customer in Model)
+      {
+         <tr>
+            <td>
+               @customer.Name
+            </td>
+         </tr>
+      }
+
+   </tbody>
+</table>
+
