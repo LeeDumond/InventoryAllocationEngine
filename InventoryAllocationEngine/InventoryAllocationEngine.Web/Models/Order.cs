@@ -5,8 +5,9 @@ namespace InventoryAllocationEngine.Web.Models
 {
    public class Order
    {
-      public Guid Id { get; set; }
+      public int Id { get; set; }
       public Guid CustomerId { get; set; }
+      public DateTime DateReceived { get; set; }
 
       public virtual Customer Customer { get; set; }
       public virtual ICollection<OrderItem> OrderItems { get; set; } 

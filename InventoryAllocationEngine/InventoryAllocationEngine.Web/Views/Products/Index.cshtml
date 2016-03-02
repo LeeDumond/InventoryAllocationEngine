@@ -1,0 +1,30 @@
+﻿@model IEnumerable<InventoryAllocationEngine.Web.Models.Product>
+
+@{
+    ViewBag.Title = "Products";
+}
+
+<h2 class="page-header">Products</h2>
+
+<table class="table">
+   <thead>
+   <tr>
+      <th>
+         Name
+      </th>
+   </tr>
+   </thead>
+   <tbody>
+
+      @foreach (var product in Model)
+      {
+         <tr>
+            <td>
+               @product.Name
+            </td>
+         </tr>
+      }
+   
+   </tbody>
+</table>
+

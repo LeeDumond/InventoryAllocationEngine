@@ -1,0 +1,42 @@
+﻿@model IEnumerable<InventoryAllocationEngine.Web.Models.Order>
+
+@{
+   ViewBag.Title = "Orders";
+}
+
+<h2 class="page-header">Orders</h2>
+
+@foreach (var order in Model)
+{
+   <h4>
+      Order No.: @order.Id<br/>
+      Customer: @order.Customer.Name<br/>
+      Date Received: @order.DateReceived.ToShortDateString()
+   </h4>
+
+   <table class="table">
+      <thead>
+      <tr>
+         <th>
+            Product
+         </th>
+         <th>
+            Quantity
+         </th>
+      </tr>
+      </thead>
+      <tbody>
+      @foreach (var item in order.OrderItems)
+      {
+         <tr>
+            <td>
+               @item.Product.Name
+            </td>
+            <td>
+               @item.Quantity
+            </td>
+         </tr>
+      }
+      </tbody>
+   </table>
+}
