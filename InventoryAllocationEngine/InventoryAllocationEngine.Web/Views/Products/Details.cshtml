@@ -3,7 +3,12 @@
     ViewBag.Title = Model.Description;
 }
 
-<h2 class="page-header">@Model.Description</h2>
+<h2 class="page-header">
+   @Model.Description
+   <small>
+      @Model.QuantityAvailable available
+   </small>
+</h2>
 
 <h3>Orders</h3>
 

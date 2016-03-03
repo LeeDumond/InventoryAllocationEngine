@@ -1,7 +1,12 @@
 ﻿@model IEnumerable<InventoryAllocationEngine.Web.Models.Product>
 
 @{
-    ViewBag.Title = "Products";
+   ViewBag.Title = "Products";
+
+   if (IsPost)
+   {
+  
+   }
 }
 
 <h2 class="page-header">Products</h2>
@@ -12,20 +17,42 @@
       <th>
          Description
       </th>
-
+      <th>
+         Quantity Available
+      </th>
+      <th>
+         Pending Orders
+      </th>
+      <th>
+         Over (Short)
+      </th>
    </tr>
    </thead>
    <tbody>
 
-      @foreach (var product in Model)
-      {
-         <tr>
-            <td>
-               <a href="@Url.Action("Details", new {id = product.Id})" >@product.Description</a>
-            </td>
-         </tr>
-      }
-   
+   @foreach (var product in Model)
+   {
+
+      int overShort = @product.QuantityAvailable - @product.OrderItems.Sum(oi => oi.Quantity);
+
+      
+
+      <tr>
+         <td>
+            <a href="@Url.Action("Details", new {id = product.Id})">@product.Description</a>
+         </td>
+         <td>
+            @product.QuantityAvailable
+         </td>
+
+         <td>
+            @product.OrderItems.Sum(oi => oi.Quantity) (@product.OrderItems.Count @(product.OrderItems.Count == 1 ? "order" : "orders"))
+         </td>
+         <td class="@(overShort < 0 ? "text-danger" : "")">            
+            @(overShort < 0 ? "(" + Math.Abs(overShort) + ")" : overShort.ToString())
+         </td>
+      </tr>
+   }
+
    </tbody>
 </table>
-
