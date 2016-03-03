@@ -21,7 +21,7 @@ INSERT INTO [dbo].[Customers] ([Id], [Name]) VALUES (N'f23bfea2-f1df-e511-9bf5-6
 INSERT INTO [dbo].[OrderItems] ([Id], [OrderId], [ProductId], [Quantity]) VALUES (N'14e94141-0ee0-e511-9bf5-606dc7c69a50', 1001, N'cd233a97-f9df-e511-9bf5-606dc7c69a50', 250)
 
 
-INSERT INTO [dbo].[Products] ([Id], [Name]) VALUES (N'cd233a97-f9df-e511-9bf5-606dc7c69a50', N'Chicken, broiler/fryer')
+INSERT INTO [dbo].[Products] ([Id], [Description], [QuantityAvailable]) VALUES (N'cd233a97-f9df-e511-9bf5-606dc7c69a50', N'Chicken, broiler/fryer', 900)
 
 
 SET IDENTITY_INSERT [dbo].[Orders] ON

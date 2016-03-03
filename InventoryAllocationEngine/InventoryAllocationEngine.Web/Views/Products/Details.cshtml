@@ -1,0 +1,47 @@
+﻿@model InventoryAllocationEngine.Web.Models.Product
+@{
+    ViewBag.Title = Model.Description;
+}
+
+<h2 class="page-header">@Model.Description</h2>
+
+<h3>Orders</h3>
+
+<table class="table">
+   <thead>
+   <tr>
+      <th>
+         Order No.
+      </th>
+      <th>
+         Date Received
+      </th>
+      <th>
+         Customer
+      </th>
+      <th>
+         Qty. Ordered
+      </th>
+   </tr>
+   </thead>
+   <tbody>
+   @foreach (var orderItem in Model.OrderItems.OrderBy(oi => oi.Order.DateReceived))
+   {
+      <tr>
+         <td>
+            @orderItem.Order.Id
+         </td>
+         <td>
+            @orderItem.Order.DateReceived.ToShortDateString()
+         </td>
+         <td>
+            @orderItem.Order.Customer.Name
+         </td>
+         <td>
+            @orderItem.Quantity
+         </td>
+      </tr>
+   }
+   </tbody>
+</table>
+

@@ -10,8 +10,9 @@
    <thead>
    <tr>
       <th>
-         Name
+         Description
       </th>
+
    </tr>
    </thead>
    <tbody>
@@ -20,7 +21,7 @@
       {
          <tr>
             <td>
-               @product.Name
+               <a href="@Url.Action("Details", new {id = product.Id})" >@product.Description</a>
             </td>
          </tr>
       }

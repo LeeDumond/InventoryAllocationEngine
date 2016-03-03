@@ -13,7 +13,12 @@ namespace InventoryAllocationEngine.Web.Controllers
 
         public ActionResult Index()
         {
-            return View(dbContext.Products.OrderBy(p => p.Name));
+            return View(dbContext.Products.OrderBy(p => p.Description));
         }
+
+       public ActionResult Details(Guid id)
+       {
+          return View(dbContext.Products.Find(id));
+       }
     }
 }
