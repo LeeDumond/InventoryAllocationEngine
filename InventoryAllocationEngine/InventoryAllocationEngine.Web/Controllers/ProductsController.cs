@@ -20,5 +20,11 @@ namespace InventoryAllocationEngine.Web.Controllers
        {
           return View(dbContext.Products.Find(id));
        }
-    }
+
+      [HttpPost]
+      public ActionResult Allocate(string allocationMethod)
+      {
+         return View("Index", dbContext.Products.OrderBy(p => p.Description));
+      }
+   }
 }

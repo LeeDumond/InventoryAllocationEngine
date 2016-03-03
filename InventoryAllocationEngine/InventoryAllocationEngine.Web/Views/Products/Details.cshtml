@@ -1,12 +1,12 @@
 ﻿@model InventoryAllocationEngine.Web.Models.Product
 @{
-    ViewBag.Title = Model.Description;
+   ViewBag.Title = Model.Description;
 
    int overshort = Model.QuantityAvailable - Model.OrderItems.Sum(oi => oi.Quantity);
 }
 
 <h2 class="page-header">
-   @Model.Description   
+   @Model.Description
 </h2>
 
 <p>
@@ -18,6 +18,27 @@
 <p>
    Over/(Short): <span class="@(overshort < 0 ? "text-danger" : "")"> @(overshort < 0 ? "(" + Math.Abs(overshort) + ")" : overshort.ToString())</span>
 </p>
+
+<div>
+
+   @using (Html.BeginForm("Allocate", "Products", FormMethod.Post, new { @class = "form-inline" }))
+   {
+      <div class="form-group">
+         <label for="allocationMethod">Allocation Method: </label>
+         @Html.DropDownList("allocationMethod", new List<SelectListItem>
+      {
+         new SelectListItem
+         {
+            Text = "Simple"
+         }
+      }, new { @class = "form-control" })
+         &nbsp;&nbsp;
+      </div>
+
+      <button type="submit" class="btn btn-primary">Allocate</button>
+   }
+
+</div>
 
 <h3>Orders</h3>
 
@@ -58,4 +79,3 @@
    }
    </tbody>
 </table>
-

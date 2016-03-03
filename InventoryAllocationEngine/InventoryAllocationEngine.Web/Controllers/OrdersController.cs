@@ -16,5 +16,7 @@ namespace InventoryAllocationEngine.Web.Controllers
       {
          return View(dbContext.Orders.OrderBy(o => o.DateReceived));
       }
+
+      
    }
 }
