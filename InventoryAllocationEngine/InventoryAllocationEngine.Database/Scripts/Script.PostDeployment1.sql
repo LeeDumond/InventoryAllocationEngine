@@ -18,12 +18,18 @@ INSERT INTO [dbo].[Customers] ([Id], [Name]) VALUES (N'771f9194-f1df-e511-9bf5-6
 INSERT INTO [dbo].[Customers] ([Id], [Name]) VALUES (N'f23bfea2-f1df-e511-9bf5-606dc7c69a50', N'HyVee')
 
 
-INSERT INTO [dbo].[OrderItems] ([Id], [OrderId], [ProductId], [Quantity]) VALUES (N'14e94141-0ee0-e511-9bf5-606dc7c69a50', 1001, N'cd233a97-f9df-e511-9bf5-606dc7c69a50', 250)
+INSERT INTO [dbo].[OrderItems] ([Id], [OrderId], [ProductId], [Quantity]) VALUES (N'14e94141-0ee0-e511-9bf5-606dc7c69a50', 2001, N'cd233a97-f9df-e511-9bf5-606dc7c69a50', 250)
+INSERT INTO [dbo].[OrderItems] ([Id], [OrderId], [ProductId], [Quantity]) VALUES (N'cd934408-f3e0-e511-9bf5-606dc7c69a50', 2002, N'cd233a97-f9df-e511-9bf5-606dc7c69a50', 425)
+INSERT INTO [dbo].[OrderItems] ([Id], [OrderId], [ProductId], [Quantity]) VALUES (N'b3246317-f3e0-e511-9bf5-606dc7c69a50', 2003, N'cd233a97-f9df-e511-9bf5-606dc7c69a50', 375)
+INSERT INTO [dbo].[OrderItems] ([Id], [OrderId], [ProductId], [Quantity]) VALUES (N'd7ce3023-f3e0-e511-9bf5-606dc7c69a50', 2004, N'cd233a97-f9df-e511-9bf5-606dc7c69a50', 300)
 
 
 INSERT INTO [dbo].[Products] ([Id], [Description], [QuantityAvailable]) VALUES (N'cd233a97-f9df-e511-9bf5-606dc7c69a50', N'Chicken, broiler/fryer', 900)
 
 
 SET IDENTITY_INSERT [dbo].[Orders] ON
-INSERT INTO [dbo].[Orders] ([Id], [CustomerId], [DateReceived]) VALUES (1001, N'6da2468d-f1df-e511-9bf5-606dc7c69a50', N'2016-03-01 00:00:00')
+INSERT INTO [dbo].[Orders] ([Id], [CustomerId], [DateReceived]) VALUES (2001, N'6da2468d-f1df-e511-9bf5-606dc7c69a50', N'2016-03-01 00:00:00')
+INSERT INTO [dbo].[Orders] ([Id], [CustomerId], [DateReceived]) VALUES (2002, N'6ea2468d-f1df-e511-9bf5-606dc7c69a50', N'2016-03-02 00:00:00')
+INSERT INTO [dbo].[Orders] ([Id], [CustomerId], [DateReceived]) VALUES (2003, N'6fa2468d-f1df-e511-9bf5-606dc7c69a50', N'2016-03-01 00:00:00')
+INSERT INTO [dbo].[Orders] ([Id], [CustomerId], [DateReceived]) VALUES (2004, N'771f9194-f1df-e511-9bf5-606dc7c69a50', N'2016-02-29 00:00:00')
 SET IDENTITY_INSERT [dbo].[Orders] OFF

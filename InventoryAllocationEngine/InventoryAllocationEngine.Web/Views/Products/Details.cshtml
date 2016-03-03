@@ -1,14 +1,23 @@
 ﻿@model InventoryAllocationEngine.Web.Models.Product
 @{
     ViewBag.Title = Model.Description;
+
+   int overshort = Model.QuantityAvailable - Model.OrderItems.Sum(oi => oi.Quantity);
 }
 
 <h2 class="page-header">
-   @Model.Description
-   <small>
-      @Model.QuantityAvailable available
-   </small>
+   @Model.Description   
 </h2>
+
+<p>
+   Quantity Available: @Model.QuantityAvailable
+</p>
+<p>
+   Pending Orders: @Model.OrderItems.Sum(oi => oi.Quantity)
+</p>
+<p>
+   Over/(Short): <span class="@(overshort < 0 ? "text-danger" : "")"> @(overshort < 0 ? "(" + Math.Abs(overshort) + ")" : overshort.ToString())</span>
+</p>
 
 <h3>Orders</h3>
 
