@@ -11,6 +11,8 @@ namespace InventoryAllocationEngine.Web.Models
 
       public string Name { get; set; }
 
+      public decimal AverageAnnualVolume { get; set; }
+
       public virtual ICollection<Order> Orders { get; set; } 
    }
 }

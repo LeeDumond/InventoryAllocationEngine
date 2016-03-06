@@ -3,6 +3,7 @@ using System.Linq;
 using System.Web.Mvc;
 using InventoryAllocationEngine.Web.Models;
 using InventoryAllocationEngine.Web.Services;
+using InventoryAllocationEngine.Web.Services.Enumerations;
 
 namespace InventoryAllocationEngine.Web.Controllers
 {

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace InventoryAllocationEngine.Web.Services
+namespace InventoryAllocationEngine.Web.Services.Enumerations
 {
    public enum AllocationMethod
    {
@@ -11,6 +11,9 @@ namespace InventoryAllocationEngine.Web.Services
       LargestOrdersFirst,
 
       [Display(Name = "Oldest Orders First")]
-      OldestOrdersFirst
+      OldestOrdersFirst,
+
+      [Display(Name = "Best Customers First")]
+      BestCustomersFirst
    }
 }

@@ -11,6 +11,9 @@
       <th>
          Name
       </th>
+      <th>
+         Avg. Annual Vol.
+      </th>
    </tr>
    </thead>
    <tbody>
@@ -20,6 +23,9 @@
          <tr>
             <td>
                @customer.Name
+            </td>
+            <td>
+               @customer.AverageAnnualVolume.ToString("C0")
             </td>
          </tr>
       }
