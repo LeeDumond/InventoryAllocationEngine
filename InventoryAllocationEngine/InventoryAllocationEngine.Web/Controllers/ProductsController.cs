@@ -1,30 +1,39 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using InventoryAllocationEngine.Web.Models;
+using InventoryAllocationEngine.Web.Services;
 
 namespace InventoryAllocationEngine.Web.Controllers
 {
-    public class ProductsController : Controller
-    {
-        private readonly IAEContext dbContext = new IAEContext();
+   public class ProductsController : Controller
+   {
+      private readonly IAEContext dbContext;
+      private readonly AllocationService allocationService;
 
-        public ActionResult Index()
-        {
-            return View(dbContext.Products.OrderBy(p => p.Description));
-        }
+      public ProductsController()
+      {
+         dbContext = new IAEContext();
+         allocationService = new AllocationService(dbContext);
+      }
 
-       public ActionResult Details(Guid id)
-       {
-          return View(dbContext.Products.Find(id));
-       }
+      public ActionResult Index()
+      {
+         return View(dbContext.Products.OrderBy(p => p.Description));
+      }
+
+      public ActionResult Details(Guid id)
+      {
+         return View(dbContext.Products.Find(id));
+      }
 
       [HttpPost]
-      public ActionResult Allocate(string allocationMethod)
+      public ActionResult Allocate(Guid id, AllocationMethod allocationMethod, double weighting)
       {
-         return View("Index", dbContext.Products.OrderBy(p => p.Description));
+
+         allocationService.Allocate(id, allocationMethod, weighting);
+
+         return View("Details", dbContext.Products.Find(id));
       }
    }
 }

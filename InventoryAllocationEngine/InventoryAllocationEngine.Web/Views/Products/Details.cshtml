@@ -1,8 +1,9 @@
-﻿@model InventoryAllocationEngine.Web.Models.Product
+﻿@using InventoryAllocationEngine.Web.Services
+@model InventoryAllocationEngine.Web.Models.Product
 @{
    ViewBag.Title = Model.Description;
 
-   int overshort = Model.QuantityAvailable - Model.OrderItems.Sum(oi => oi.Quantity);
+   int overshort = Model.QuantityAvailable - Model.OrderItems.Sum(oi => oi.QuantityOrdered);
 }
 
 <h2 class="page-header">
@@ -13,25 +14,51 @@
    Quantity Available: @Model.QuantityAvailable
 </p>
 <p>
-   Pending Orders: @Model.OrderItems.Sum(oi => oi.Quantity)
+   Pending Orders: @Model.OrderItems.Sum(oi => oi.QuantityOrdered)
 </p>
 <p>
    Over/(Short): <span class="@(overshort < 0 ? "text-danger" : "")"> @(overshort < 0 ? "(" + Math.Abs(overshort) + ")" : overshort.ToString())</span>
 </p>
-
 <div>
 
-   @using (Html.BeginForm("Allocate", "Products", FormMethod.Post, new { @class = "form-inline" }))
+   @using (Html.BeginForm("Allocate", "Products", FormMethod.Post, new {@class = "form-inline"}))
    {
+      @Html.HiddenFor(model => model.Id)
       <div class="form-group">
-         <label for="allocationMethod">Allocation Method: </label>
-         @Html.DropDownList("allocationMethod", new List<SelectListItem>
-      {
-         new SelectListItem
+         @Html.Label("allocationMethod", "Allocation method: ")
+
+         @Html.DropDownList("allocationMethod",
+            EnumHelper.GetSelectList(typeof(AllocationMethod)),
+            new {@class = "form-control"})
+
+         &nbsp;&nbsp;
+
+         @Html.Label("weighting", "Weighting: ")
+
+         @Html.DropDownList("weighting", new List<SelectListItem>
          {
-            Text = "Simple"
-         }
-      }, new { @class = "form-control" })
+            new SelectListItem
+            {
+               Text = "100%",
+               Value = "1"
+            },
+            new SelectListItem
+            {
+               Text = "75%",
+               Value = "0.75"
+            },
+            new SelectListItem
+            {
+               Text = "50%",
+               Value = "0.5"
+            },
+            new SelectListItem
+            {
+               Text = "25%",
+               Value = "0.25"
+            }
+         }, new {@class = "form-control"})
+
          &nbsp;&nbsp;
       </div>
 
@@ -57,6 +84,9 @@
       <th>
          Qty. Ordered
       </th>
+      <th>
+         Qty. Allocated
+      </th>
    </tr>
    </thead>
    <tbody>
@@ -73,9 +103,23 @@
             @orderItem.Order.Customer.Name
          </td>
          <td>
-            @orderItem.Quantity
+            @orderItem.QuantityOrdered
+         </td>
+         <td>
+            @orderItem.QuantityAllocated
          </td>
       </tr>
    }
+   <tr>
+      <th colspan="3">
+         Totals:
+      </th>
+      <th>
+         @Model.OrderItems.Sum(oi => oi.QuantityOrdered)
+      </th>
+      <th>
+         @Model.OrderItems.Sum(oi => oi.QuantityAllocated)
+      </th>
+   </tr>
    </tbody>
 </table>

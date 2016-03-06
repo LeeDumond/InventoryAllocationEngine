@@ -33,7 +33,7 @@
    @foreach (var product in Model)
    {
 
-      int overShort = @product.QuantityAvailable - @product.OrderItems.Sum(oi => oi.Quantity);
+      int overShort = @product.QuantityAvailable - @product.OrderItems.Sum(oi => oi.QuantityOrdered);
 
       
 
@@ -46,7 +46,7 @@
          </td>
 
          <td>
-            @product.OrderItems.Sum(oi => oi.Quantity) (@product.OrderItems.Count @(product.OrderItems.Count == 1 ? "order" : "orders"))
+            @product.OrderItems.Sum(oi => oi.QuantityOrdered) (@product.OrderItems.Count @(product.OrderItems.Count == 1 ? "order" : "orders"))
          </td>
          <td class="@(overShort < 0 ? "text-danger" : "")">            
             @(overShort < 0 ? "(" + Math.Abs(overShort) + ")" : overShort.ToString())

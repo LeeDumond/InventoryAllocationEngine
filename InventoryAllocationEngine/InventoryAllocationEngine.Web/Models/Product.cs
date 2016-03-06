@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace InventoryAllocationEngine.Web.Models
 {
+   [DebuggerDisplay("{Description}")]
    public class Product
    {
       public Guid Id { get; set; }
