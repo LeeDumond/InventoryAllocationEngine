@@ -7,7 +7,10 @@ namespace InventoryAllocationEngine.Web.Services
       [Display(Name = "Simple")]
       Simple,
 
-      [Display(Name = "Largest Order First")]
-      LargestOrderFirst
+      [Display(Name = "Largest Orders First")]
+      LargestOrdersFirst,
+
+      [Display(Name = "Oldest Orders First")]
+      OldestOrdersFirst
    }
 }
