@@ -28,13 +28,13 @@ namespace InventoryAllocationEngine.Web.Services
 
          CalculateUnweightedAllocation(product.OrderItems.ToList(), product.QuantityAvailable);
 
-         var onHand = product.QuantityAvailable;
-         var quantityOrdered = product.OrderItems.Sum(oi => oi.QuantityOrdered);
+         //var onHand = product.QuantityAvailable;
+         //var quantityOrdered = product.OrderItems.Sum(oi => oi.QuantityOrdered);
 
-         if (onHand > quantityOrdered)
-         {
-            return;
-         }
+         //if (onHand > quantityOrdered)
+         //{
+         //   return;
+         //}
 
          
 
@@ -91,10 +91,12 @@ namespace InventoryAllocationEngine.Web.Services
                orderItem.QuantityAllocatedUnweighted = (int)(orderItem.QuantityOrdered * percentage);
             }
 
-            int quantityAllocated = orderItems.Sum(oi => oi.QuantityAllocatedUnweighted);
+            
 
             if (percentage < 1)
             {
+               int quantityAllocated = orderItems.Sum(oi => oi.QuantityAllocatedUnweighted);
+
                int unallocated = quantityAvailable - quantityAllocated;
 
                if (unallocated > 0)
@@ -116,19 +118,31 @@ namespace InventoryAllocationEngine.Web.Services
          {
             double percentage = (double)quantityAvailable / quantityOrdered;
 
+            if (percentage >= 1)
+            {
+               percentage = 1;
+            }
+
             foreach (var orderItem in orderItems)
             {
                orderItem.QuantityAllocatedWeighted = (int)(orderItem.QuantityOrdered * percentage);
             }
 
-            int quantityAllocated = orderItems.Sum(oi => oi.QuantityAllocatedWeighted);
+            
 
-            int unallocated = quantityAvailable - quantityAllocated;
-
-            if (unallocated > 0)
+            if (percentage < 1)
             {
-               orderItems.First().QuantityAllocatedWeighted = orderItems.First().QuantityAllocatedWeighted + unallocated;
+               int quantityAllocated = orderItems.Sum(oi => oi.QuantityAllocatedWeighted);
+
+               int unallocated = quantityAvailable - quantityAllocated;
+
+               if (unallocated > 0)
+               {
+                  orderItems.First().QuantityAllocatedWeighted = orderItems.First().QuantityAllocatedWeighted + unallocated;
+               }
             }
+
+               
          }
 
          return orderItems.OrderBy(o => o.Id).ToList();
