@@ -35,34 +35,62 @@ namespace InventoryAllocationEngine.Web.Services
 
          // split up the orders
          List<OrderItem> orderItems = product.OrderItems.OrderBy(p => p.Id).ToList();
-         List<OrderItem> orderItems1 = dbContext.Products.AsNoTracking().Single(p => p.Id == id).OrderItems.OrderBy(p => p.Id).ToList();
-         List<OrderItem> orderItems2 = dbContext.Products.AsNoTracking().Single(p => p.Id == id).OrderItems.OrderBy(p => p.Id).ToList();
+         List<OrderItem> orderItemsSimple = dbContext.Products.AsNoTracking().Single(p => p.Id == id).OrderItems.OrderBy(p => p.Id).ToList();
+         List<OrderItem> orderItemsComplex = dbContext.Products.AsNoTracking().Single(p => p.Id == id).OrderItems.OrderBy(p => p.Id).ToList();
 
-         foreach (var orderItem1 in orderItems1)
+         foreach (var orderItem in orderItemsSimple)
          {
-            orderItem1.QuantityOrdered = (int) (orderItem1.QuantityOrdered * (1 - weighting));
+            orderItem.QuantityOrdered = (int) (orderItem.QuantityOrdered * (1 - weighting));
          }
 
-         for (int i = 0; i < orderItems2.Count; i++)
+         for (int i = 0; i < orderItemsComplex.Count; i++)
          {
-            orderItems2[i].QuantityOrdered = orderItems[i].QuantityOrdered - orderItems1[i].QuantityOrdered;
+            orderItemsComplex[i].QuantityOrdered = orderItems[i].QuantityOrdered - orderItemsSimple[i].QuantityOrdered;
          }
 
-         int onHandFor1 = (int) (product.QuantityAvailable * (1 - weighting));
-         int onHandFor2 = product.QuantityAvailable - onHandFor1;
+         int onHandForSimple = (int) (product.QuantityAvailable * (1 - weighting));
+         int onHandForComplex = product.QuantityAvailable - onHandForSimple;
 
          // orderItems1 gets Simple allocation
-         orderItems1 = AllocateSimple(orderItems1, onHandFor1);
+         orderItemsSimple = AllocateSimple(orderItemsSimple, onHandForSimple);
 
          // orderItems2 gets Complex allocation
-         orderItems2 = AllocateComplex(orderItems2, onHandFor2, allocationMethod);
+         orderItemsComplex = AllocateComplex(orderItemsComplex, onHandForComplex, allocationMethod);
 
          // combine allocated quantities
          for (int i = 0; i < orderItems.Count; i++)
          {
-            orderItems[i].QuantityAllocatedWeighted = orderItems1[i].QuantityAllocatedWeighted + orderItems2[i].QuantityAllocatedWeighted;
+            orderItems[i].QuantityAllocatedWeighted = orderItemsSimple[i].QuantityAllocatedWeighted + orderItemsComplex[i].QuantityAllocatedWeighted;
          }
 
+      }
+
+      private List<OrderItem> AllocateSimple(List<OrderItem> orderItems, int quantityAvailable)
+      {
+         orderItems = orderItems.OrderByDescending(oi => oi.QuantityOrdered).ToList();
+         
+         int quantityOrdered = orderItems.Sum(oi => oi.QuantityOrdered);
+
+         if (quantityOrdered > 0 && quantityAvailable > 0)
+         {
+            double percentage = (double)quantityAvailable / quantityOrdered;
+
+            foreach (var orderItem in orderItems)
+            {
+               orderItem.QuantityAllocatedWeighted = (int)(orderItem.QuantityOrdered * percentage);
+            }
+
+            int quantityAllocated = orderItems.Sum(oi => oi.QuantityAllocatedWeighted);
+
+            int unallocated = quantityAvailable - quantityAllocated;
+
+            if (unallocated > 0)
+            {
+               orderItems.First().QuantityAllocatedWeighted = orderItems.First().QuantityAllocatedWeighted + unallocated;
+            }
+         }
+
+         return orderItems.OrderBy(o => o.Id).ToList();
       }
 
       private List<OrderItem> AllocateComplex(List<OrderItem> orderItems, int quantityAvailable, AllocationMethod allocationMethod)
@@ -114,34 +142,6 @@ namespace InventoryAllocationEngine.Web.Services
          if (unallocated > 0)
          {
             orderItems.First().QuantityAllocatedWeighted = orderItems.First().QuantityAllocatedWeighted + unallocated;
-         }
-
-         return orderItems.OrderBy(o => o.Id).ToList();
-      }
-
-      private List<OrderItem> AllocateSimple(List<OrderItem> orderItems, int quantityAvailable)
-      {
-         orderItems = orderItems.OrderByDescending(oi => oi.QuantityOrdered).ToList();
-         
-         int quantityOrdered = orderItems.Sum(oi => oi.QuantityOrdered);
-
-         if (quantityOrdered > 0 && quantityAvailable > 0)
-         {
-            double percentage = (double)quantityAvailable / quantityOrdered;
-
-            foreach (var orderItem in orderItems)
-            {
-               orderItem.QuantityAllocatedWeighted = (int)(orderItem.QuantityOrdered * percentage);
-            }
-
-            int quantityAllocated = orderItems.Sum(oi => oi.QuantityAllocatedWeighted);
-
-            int unallocated = quantityAvailable - quantityAllocated;
-
-            if (unallocated > 0)
-            {
-               orderItems.First().QuantityAllocatedWeighted = orderItems.First().QuantityAllocatedWeighted + unallocated;
-            }
          }
 
          return orderItems.OrderBy(o => o.Id).ToList();
