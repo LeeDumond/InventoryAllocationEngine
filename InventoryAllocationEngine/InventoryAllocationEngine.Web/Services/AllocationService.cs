@@ -26,6 +26,8 @@ namespace InventoryAllocationEngine.Web.Services
       {
          var product = dbContext.Products.Find(id);
 
+         CalculateUnweightedAllocation(product.OrderItems.ToList(), product.QuantityAvailable);
+
          var onHand = product.QuantityAvailable;
          var quantityOrdered = product.OrderItems.Sum(oi => oi.QuantityOrdered);
 
@@ -34,7 +36,7 @@ namespace InventoryAllocationEngine.Web.Services
             return;
          }
 
-         CalculateUnweightedAllocation(product.OrderItems.ToList(), product.QuantityAvailable);
+         
 
          
          // split up the orders
@@ -79,6 +81,11 @@ namespace InventoryAllocationEngine.Web.Services
          {
             double percentage = (double)quantityAvailable / quantityOrdered;
 
+            if (percentage >=1)
+            {
+               percentage = 1;
+            }
+
             foreach (var orderItem in orderItems)
             {
                orderItem.QuantityAllocatedUnweighted = (int)(orderItem.QuantityOrdered * percentage);
@@ -86,11 +93,14 @@ namespace InventoryAllocationEngine.Web.Services
 
             int quantityAllocated = orderItems.Sum(oi => oi.QuantityAllocatedUnweighted);
 
-            int unallocated = quantityAvailable - quantityAllocated;
-
-            if (unallocated > 0)
+            if (percentage < 1)
             {
-               orderItems.First().QuantityAllocatedUnweighted = orderItems.First().QuantityAllocatedUnweighted + unallocated;
+               int unallocated = quantityAvailable - quantityAllocated;
+
+               if (unallocated > 0)
+               {
+                  orderItems.First().QuantityAllocatedUnweighted = orderItems.First().QuantityAllocatedUnweighted + unallocated;
+               }
             }
          }
 
