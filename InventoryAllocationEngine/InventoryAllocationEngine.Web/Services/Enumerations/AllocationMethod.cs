@@ -10,7 +10,7 @@ namespace InventoryAllocationEngine.Web.Services.Enumerations
       [Display(Name = "Favor Larger Orders")]
       LargestOrdersFirst,
 
-      [Display(Name = "Favor Older Orders")]
+      [Display(Name = "Favor Earlier Orders")]
       OldestOrdersFirst,
 
       [Display(Name = "Favor Larger Customers")]
