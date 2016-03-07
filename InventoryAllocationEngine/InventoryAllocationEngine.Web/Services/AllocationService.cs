@@ -28,17 +28,15 @@ namespace InventoryAllocationEngine.Web.Services
 
          CalculateUnweightedAllocation(product.OrderItems.ToList(), product.QuantityAvailable);
 
-         //var onHand = product.QuantityAvailable;
-         //var quantityOrdered = product.OrderItems.Sum(oi => oi.QuantityOrdered);
+         var onHand = product.QuantityAvailable;
+         var quantityOrdered = product.OrderItems.Sum(oi => oi.QuantityOrdered);
 
-         //if (onHand > quantityOrdered)
-         //{
-         //   return;
-         //}
+         if (onHand > quantityOrdered)
+         {
+            AllocateSimple(product.OrderItems.ToList(), onHand);
+            return;
+         }
 
-         
-
-         
          // split up the orders
          List<OrderItem> orderItems = product.OrderItems.OrderBy(p => p.Id).ToList();
          List<OrderItem> orderItemsSimple = dbContext.Products.AsNoTracking().Single(p => p.Id == id).OrderItems.OrderBy(p => p.Id).ToList();

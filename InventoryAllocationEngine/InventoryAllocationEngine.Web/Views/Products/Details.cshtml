@@ -18,12 +18,13 @@
 </p>
 <p>
    Over/(Short): <span class="@(overshort < 0 ? "text-danger" : "")"> @(overshort < 0 ? "(" + Math.Abs(overshort) + ")" : overshort.ToString())</span>
+
 </p>
 
 <h3>Orders</h3>
 @if (Model.OrderItems.Any())
 {
-   <div style="padding-top: 10px; padding-bottom: 10px; margin-bottom: 10px; border-bottom: 1px solid #ddd; border-top: 1px solid #ddd">
+   <div id="allocateForm" style="padding-top: 10px; padding-bottom: 10px; margin-bottom: 10px; border-bottom: 1px solid #ddd; border-top: 1px solid #ddd">
 
       @using (Html.BeginForm("Allocate", "Products", FormMethod.Post, new {@class = "form-inline"}))
       {
@@ -148,3 +149,14 @@ else
 {
    <p><i>There are no orders for this product.</i></p>
 }
+
+<script type="text/javascript">
+   $(function () {
+      var isDisabled = @(overshort) >= 0;
+
+      if (isDisabled) {
+         $('#allocateForm :input').prop('disabled', true);
+         $('#allocateForm').css('opacity', 0.4);
+      } 
+   });
+</script>
