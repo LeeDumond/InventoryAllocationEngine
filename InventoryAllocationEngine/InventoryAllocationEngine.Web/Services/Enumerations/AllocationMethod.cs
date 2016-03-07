@@ -4,8 +4,8 @@ namespace InventoryAllocationEngine.Web.Services.Enumerations
 {
    public enum AllocationMethod
    {
-      [Display(Name = "Simple")]
-      Simple,
+      [Display(Name = "Unweighted")]
+      Unweighted,
 
       [Display(Name = "Largest Orders First")]
       LargestOrdersFirst,

@@ -56,6 +56,11 @@
             {
                Text = "25%",
                Value = "0.25"
+            },
+            new SelectListItem
+            {
+               Text = "0",
+               Value = "0"
             }
          }, new {@class = "form-control"})
 
@@ -85,7 +90,10 @@
          Qty. Ordered
       </th>
       <th>
-         Qty. Allocated
+         Unweighted Allocation
+      </th>
+      <th>
+         Weighted Allocation
       </th>
    </tr>
    </thead>
@@ -106,7 +114,10 @@
             @orderItem.QuantityOrdered
          </td>
          <td>
-            @orderItem.QuantityAllocated
+            @orderItem.QuantityAllocatedUnweighted
+         </td>
+         <td>
+            @orderItem.QuantityAllocatedWeighted
          </td>
       </tr>
    }
@@ -118,7 +129,10 @@
          @Model.OrderItems.Sum(oi => oi.QuantityOrdered)
       </th>
       <th>
-         @Model.OrderItems.Sum(oi => oi.QuantityAllocated)
+         @Model.OrderItems.Sum(oi => oi.QuantityAllocatedUnweighted)
+      </th>
+      <th>
+         @Model.OrderItems.Sum(oi => oi.QuantityAllocatedWeighted)
       </th>
    </tr>
    </tbody>

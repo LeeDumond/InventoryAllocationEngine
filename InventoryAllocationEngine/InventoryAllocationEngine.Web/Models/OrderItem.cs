@@ -14,7 +14,10 @@ namespace InventoryAllocationEngine.Web.Models
       public int QuantityOrdered { get; set; }
 
       [NotMapped]
-      public int QuantityAllocated { get; set; }
+      public int QuantityAllocatedWeighted { get; set; }
+
+      [NotMapped]
+      public int QuantityAllocatedUnweighted { get; set; }
 
       public virtual Order Order { get; set; }
       public virtual Product Product { get; set; } 

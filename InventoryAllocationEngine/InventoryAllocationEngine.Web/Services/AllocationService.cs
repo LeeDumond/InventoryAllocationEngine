@@ -27,40 +27,67 @@ namespace InventoryAllocationEngine.Web.Services
             return;
          }
 
-         Allocate(product, allocationMethod);
+         if (allocationMethod == AllocationMethod.Unweighted)
+         {
+            AllocateSimple(product.OrderItems.ToList(), product.QuantityAvailable);
+            return;
+         }
+
+         // split up the orders
+         List<OrderItem> orderItems = product.OrderItems.OrderBy(p => p.Id).ToList();
+         List<OrderItem> orderItems1 = dbContext.Products.AsNoTracking().Single(p => p.Id == id).OrderItems.OrderBy(p => p.Id).ToList();
+         List<OrderItem> orderItems2 = dbContext.Products.AsNoTracking().Single(p => p.Id == id).OrderItems.OrderBy(p => p.Id).ToList();
+
+         foreach (var orderItem1 in orderItems1)
+         {
+            orderItem1.QuantityOrdered = (int) (orderItem1.QuantityOrdered * (1 - weighting));
+         }
+
+         for (int i = 0; i < orderItems2.Count; i++)
+         {
+            orderItems2[i].QuantityOrdered = orderItems[i].QuantityOrdered - orderItems1[i].QuantityOrdered;
+         }
+
+         int onHandFor1 = (int) (product.QuantityAvailable * (1 - weighting));
+         int onHandFor2 = product.QuantityAvailable - onHandFor1;
+
+         // orderItems1 gets Simple allocation
+         orderItems1 = AllocateSimple(orderItems1, onHandFor1);
+
+         // orderItems2 gets Complex allocation
+         orderItems2 = AllocateComplex(orderItems2, onHandFor2, allocationMethod);
+
+         // combine allocated quantities
+         for (int i = 0; i < orderItems.Count; i++)
+         {
+            orderItems[i].QuantityAllocatedWeighted = orderItems1[i].QuantityAllocatedWeighted + orderItems2[i].QuantityAllocatedWeighted;
+         }
+
       }
 
-      private void Allocate(Product product, AllocationMethod allocationMethod)
+      private List<OrderItem> AllocateComplex(List<OrderItem> orderItems, int quantityAvailable, AllocationMethod allocationMethod)
       {
-         List<OrderItem> orderItems;
-
          switch (allocationMethod)
-         {
-            case AllocationMethod.Simple:
-               AllocateSimple(product);
-               return;
-
+         {            
             case AllocationMethod.LargestOrdersFirst:
-               orderItems = product.OrderItems.OrderByDescending(oi => oi.QuantityOrdered).ToList();
+               orderItems = orderItems.OrderByDescending(oi => oi.QuantityOrdered).ToList();
                break;
 
             case AllocationMethod.OldestOrdersFirst:
-               orderItems = product.OrderItems.OrderBy(oi => oi.Order.DateReceived).ToList();
+               orderItems = orderItems.OrderBy(oi => oi.Order.DateReceived).ToList();
                break;
 
             case AllocationMethod.BestCustomersFirst:
-               orderItems = product.OrderItems.OrderByDescending(oi => oi.Order.Customer.AverageAnnualVolume).ToList();
+               orderItems = orderItems.OrderByDescending(oi => oi.Order.Customer.AverageAnnualVolume).ToList();
                break;
 
             default:
-               AllocateSimple(product);
-               return;
+               return null;
          }
 
          int quantityAllocated = 0;
-         int onHand = product.QuantityAvailable;
 
-         int amountRemaining = onHand;
+         int amountRemaining = quantityAvailable;
          int index = 0;
 
          while (amountRemaining > 0 && index + 1 <= orderItems.Count)
@@ -69,48 +96,55 @@ namespace InventoryAllocationEngine.Web.Services
 
             if (amountRemaining > currentOrderItem.QuantityOrdered)
             {
-               currentOrderItem.QuantityAllocated = currentOrderItem.QuantityOrdered;
-               quantityAllocated += currentOrderItem.QuantityAllocated;
+               currentOrderItem.QuantityAllocatedWeighted = currentOrderItem.QuantityOrdered;
+               quantityAllocated += currentOrderItem.QuantityAllocatedWeighted;
             }
             else
             {
-               currentOrderItem.QuantityAllocated = amountRemaining;
+               currentOrderItem.QuantityAllocatedWeighted = amountRemaining;
                quantityAllocated += amountRemaining;
             }
 
-            amountRemaining -= currentOrderItem.QuantityAllocated;
+            amountRemaining -= currentOrderItem.QuantityAllocatedWeighted;
             index++;
          }
 
-         var unallocated = onHand - quantityAllocated;
+         var unallocated = quantityAvailable - quantityAllocated;
 
          if (unallocated > 0)
          {
-            orderItems.First().QuantityAllocated = orderItems.First().QuantityAllocated + unallocated;
+            orderItems.First().QuantityAllocatedWeighted = orderItems.First().QuantityAllocatedWeighted + unallocated;
          }
+
+         return orderItems.OrderBy(o => o.Id).ToList();
       }
 
-      private void AllocateSimple(Product product)
+      private List<OrderItem> AllocateSimple(List<OrderItem> orderItems, int quantityAvailable)
       {
-         var orderItems = product.OrderItems.OrderByDescending(oi => oi.QuantityOrdered).ToList();
-         int onHand = product.QuantityAvailable;
-         int quantityOrdered = product.OrderItems.Sum(oi => oi.QuantityOrdered);
+         orderItems = orderItems.OrderByDescending(oi => oi.QuantityOrdered).ToList();
+         
+         int quantityOrdered = orderItems.Sum(oi => oi.QuantityOrdered);
 
-         double percentage = (double) onHand / quantityOrdered;
-
-         foreach (var orderItem in orderItems)
+         if (quantityOrdered > 0 && quantityAvailable > 0)
          {
-            orderItem.QuantityAllocated = (int) (orderItem.QuantityOrdered * percentage);
+            double percentage = (double)quantityAvailable / quantityOrdered;
+
+            foreach (var orderItem in orderItems)
+            {
+               orderItem.QuantityAllocatedWeighted = (int)(orderItem.QuantityOrdered * percentage);
+            }
+
+            int quantityAllocated = orderItems.Sum(oi => oi.QuantityAllocatedWeighted);
+
+            int unallocated = quantityAvailable - quantityAllocated;
+
+            if (unallocated > 0)
+            {
+               orderItems.First().QuantityAllocatedWeighted = orderItems.First().QuantityAllocatedWeighted + unallocated;
+            }
          }
 
-         int quantityAllocated = product.OrderItems.Sum(oi => oi.QuantityAllocated);
-
-         int unallocated = onHand - quantityAllocated;
-
-         if (unallocated > 0)
-         {
-            orderItems.First().QuantityAllocated = orderItems.First().QuantityAllocated + unallocated;
-         }
+         return orderItems.OrderBy(o => o.Id).ToList();
       }
    }
 }
