@@ -4,16 +4,14 @@ namespace InventoryAllocationEngine.Web.Services.Enumerations
 {
    public enum AllocationMethod
    {
-      //[Display(Name = "Unweighted")]
-      //Unweighted,
+      [Display(Name = "Favor Larger Orders")] LargestOrdersFirst,
 
-      [Display(Name = "Favor Larger Orders")]
-      LargestOrdersFirst,
+      [Display(Name = "Favor Earlier Orders")] OldestOrdersFirst,
 
-      [Display(Name = "Favor Earlier Orders")]
-      OldestOrdersFirst,
+      [Display(Name = "Favor High-Volume Customers")] HighestVolumeCustomersFirst,
 
-      [Display(Name = "Favor Larger Customers")]
-      BestCustomersFirst
+      [Display(Name = "Favor Quick-Paying Customers")] QuickPayCustomersFirst,
+
+      [Display(Name = "Favor Credit-Worthy Customers")] CreditWorthyCustomersFirst
    }
 }

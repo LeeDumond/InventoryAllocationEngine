@@ -13,6 +13,8 @@ namespace InventoryAllocationEngine.Web.Models
 
       public decimal AverageAnnualVolume { get; set; }
 
-      public virtual ICollection<Order> Orders { get; set; } 
+      public int AccountsPayableAge { get; set; }
+      public int? DUNSScore { get; set; }
+      public virtual ICollection<Order> Orders { get; set; }
    }
 }

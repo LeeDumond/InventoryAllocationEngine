@@ -14,6 +14,12 @@
       <th>
          Avg. Annual Vol.
       </th>
+      <th>
+         Accounts Payable Age
+      </th>
+      <th>
+         DUNS Score
+      </th>
    </tr>
    </thead>
    <tbody>
@@ -26,6 +32,19 @@
             </td>
             <td>
                @customer.AverageAnnualVolume.ToString("C0")
+            </td>
+            <td>
+               @customer.AccountsPayableAge
+            </td>
+            <td>
+               @if (customer.DUNSScore.HasValue)
+               {
+                  @customer.DUNSScore
+               }
+               else
+               {
+                  <i>unknown</i>
+               }
             </td>
          </tr>
       }

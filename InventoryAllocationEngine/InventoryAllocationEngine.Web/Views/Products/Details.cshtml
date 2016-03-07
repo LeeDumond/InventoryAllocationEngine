@@ -115,7 +115,11 @@
                @orderItem.Order.DateReceived.ToString("g")
             </td>
             <td>
-               @orderItem.Order.Customer.Name
+               <span style="cursor: help; text-decoration: underline;" 
+                     title="Avg Anl Vol: @orderItem.Order.Customer.AverageAnnualVolume.ToString("C0")
+AP Age: @orderItem.Order.Customer.AccountsPayableAge
+DUNS: @orderItem.Order.Customer.DUNSScore">@orderItem.Order.Customer.Name
+               </span>
             </td>
             <td>
                @orderItem.QuantityOrdered
