@@ -33,35 +33,35 @@ namespace InventoryAllocationEngine.Web.Services
 
          if (onHand > quantityOrdered)
          {
-            AllocateSimple(product.OrderItems.ToList(), onHand);
+            AllocateUnweighted(product.OrderItems.ToList(), onHand);
             return;
          }
 
          // do weighted allocation
          var orderItems = product.OrderItems.OrderBy(p => p.Id).ToList();
-         var orderItemsSimple = dbContext.Products.AsNoTracking().Single(p => p.Id == id).OrderItems.OrderBy(p => p.Id).ToList();
-         var orderItemsComplex = dbContext.Products.AsNoTracking().Single(p => p.Id == id).OrderItems.OrderBy(p => p.Id).ToList();
+         var orderItemsUnweighted = dbContext.Products.AsNoTracking().Single(p => p.Id == id).OrderItems.OrderBy(p => p.Id).ToList();
+         var orderItemsWeighted = dbContext.Products.AsNoTracking().Single(p => p.Id == id).OrderItems.OrderBy(p => p.Id).ToList();
 
-         foreach (var orderItem in orderItemsSimple)
+         foreach (var orderItem in orderItemsUnweighted)
          {
             orderItem.QuantityOrdered = (int) (orderItem.QuantityOrdered * (1 - weighting));
          }
 
-         for (var i = 0; i < orderItemsComplex.Count; i++)
+         for (var i = 0; i < orderItemsWeighted.Count; i++)
          {
-            orderItemsComplex[i].QuantityOrdered = orderItems[i].QuantityOrdered - orderItemsSimple[i].QuantityOrdered;
+            orderItemsWeighted[i].QuantityOrdered = orderItems[i].QuantityOrdered - orderItemsUnweighted[i].QuantityOrdered;
          }
 
-         var onHandForSimple = (int) (product.QuantityAvailable * (1 - weighting));
-         var onHandForComplex = product.QuantityAvailable - onHandForSimple;
+         var onHandForUnweigthted = (int) (product.QuantityAvailable * (1 - weighting));
+         var onHandForWeighted = product.QuantityAvailable - onHandForUnweigthted;
 
-         orderItemsSimple = AllocateSimple(orderItemsSimple, onHandForSimple);
+         orderItemsUnweighted = AllocateUnweighted(orderItemsUnweighted, onHandForUnweigthted);
 
-         orderItemsComplex = AllocateComplex(orderItemsComplex, onHandForComplex, allocationMethod);
+         orderItemsWeighted = AllocateWeighted(orderItemsWeighted, onHandForWeighted, allocationMethod);
 
          for (var i = 0; i < orderItems.Count; i++)
          {
-            orderItems[i].QuantityAllocatedWeighted = orderItemsSimple[i].QuantityAllocatedWeighted + orderItemsComplex[i].QuantityAllocatedWeighted;
+            orderItems[i].QuantityAllocatedWeighted = orderItemsUnweighted[i].QuantityAllocatedWeighted + orderItemsWeighted[i].QuantityAllocatedWeighted;
          }
       }
 
@@ -99,7 +99,7 @@ namespace InventoryAllocationEngine.Web.Services
          }
       }
 
-      private List<OrderItem> AllocateSimple(List<OrderItem> orderItems, int quantityAvailable)
+      private List<OrderItem> AllocateUnweighted(List<OrderItem> orderItems, int quantityAvailable)
       {
          orderItems = orderItems.OrderByDescending(oi => oi.QuantityOrdered).ToList();
 
@@ -135,7 +135,7 @@ namespace InventoryAllocationEngine.Web.Services
          return orderItems.OrderBy(o => o.Id).ToList();
       }
 
-      private List<OrderItem> AllocateComplex(List<OrderItem> orderItems, int quantityAvailable, AllocationMethod allocationMethod)
+      private List<OrderItem> AllocateWeighted(List<OrderItem> orderItems, int quantityAvailable, AllocationMethod allocationMethod)
       {
          switch (allocationMethod)
          {
