@@ -4,16 +4,16 @@ namespace InventoryAllocationEngine.Web.Services.Enumerations
 {
    public enum AllocationMethod
    {
-      [Display(Name = "Unweighted")]
-      Unweighted,
+      //[Display(Name = "Unweighted")]
+      //Unweighted,
 
-      [Display(Name = "Largest Orders First")]
+      [Display(Name = "Favor Larger Orders")]
       LargestOrdersFirst,
 
-      [Display(Name = "Oldest Orders First")]
+      [Display(Name = "Favor Older Orders")]
       OldestOrdersFirst,
 
-      [Display(Name = "Best Customers First")]
+      [Display(Name = "Favor Larger Customers")]
       BestCustomersFirst
    }
 }

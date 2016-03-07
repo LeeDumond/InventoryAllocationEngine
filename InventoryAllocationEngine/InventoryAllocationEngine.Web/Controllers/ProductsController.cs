@@ -25,6 +25,8 @@ namespace InventoryAllocationEngine.Web.Controllers
 
       public ActionResult Details(Guid id)
       {
+         allocationService.CalculateUnweightedAllocation(id);
+
          return View(dbContext.Products.Find(id));
       }
 

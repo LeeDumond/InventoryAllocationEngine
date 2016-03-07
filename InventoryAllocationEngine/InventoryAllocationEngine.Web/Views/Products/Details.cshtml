@@ -11,17 +11,17 @@
 </h2>
 
 <p>
-   Quantity Available: @Model.QuantityAvailable
+   Pending Orders: @Model.OrderItems.Sum(oi => oi.QuantityOrdered)
 </p>
 <p>
-   Pending Orders: @Model.OrderItems.Sum(oi => oi.QuantityOrdered)
+   Quantity Available: @Model.QuantityAvailable
 </p>
 <p>
    Over/(Short): <span class="@(overshort < 0 ? "text-danger" : "")"> @(overshort < 0 ? "(" + Math.Abs(overshort) + ")" : overshort.ToString())</span>
 </p>
 <div>
 
-   @using (Html.BeginForm("Allocate", "Products", FormMethod.Post, new {@class = "form-inline"}))
+   @using (Html.BeginForm("Allocate", "Products", FormMethod.Post, new {@class = "form-inline", style="margin-top: 20px;"}))
    {
       @Html.HiddenFor(model => model.Id)
       <div class="form-group">
@@ -39,32 +39,33 @@
          {
             new SelectListItem
             {
-               Text = "100%",
-               Value = "1"
+               Text = "None",
+               Value = "0"
             },
             new SelectListItem
             {
-               Text = "75%",
-               Value = "0.75"
-            },
-            new SelectListItem
-            {
-               Text = "50%",
-               Value = "0.5"
-            },
-            new SelectListItem
-            {
-               Text = "25%",
+               Text = "Light",
                Value = "0.25"
             },
             new SelectListItem
             {
-               Text = "0",
-               Value = "0"
+               Text = "Moderate",
+               Value = "0.5"
+            },
+            new SelectListItem
+            {
+               Text = "Heavy",
+               Value = "0.75"
+            },
+            new SelectListItem
+            {
+               Text = "Full",
+               Value = "1"
             }
          }, new {@class = "form-control"})
 
          &nbsp;&nbsp;
+         
       </div>
 
       <button type="submit" class="btn btn-primary">Allocate</button>

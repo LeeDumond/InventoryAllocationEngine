@@ -15,6 +15,13 @@ namespace InventoryAllocationEngine.Web.Services
          this.dbContext = dbContext;
       }
 
+      public void CalculateUnweightedAllocation(Guid id)
+      {
+         var product = dbContext.Products.Find(id);
+
+         CalculateUnweightedAllocation(product.OrderItems.ToList(), product.QuantityAvailable);
+      }
+
       public void Allocate(Guid id, AllocationMethod allocationMethod, double weighting)
       {
          var product = dbContext.Products.Find(id);
@@ -27,12 +34,9 @@ namespace InventoryAllocationEngine.Web.Services
             return;
          }
 
-         if (allocationMethod == AllocationMethod.Unweighted)
-         {
-            AllocateSimple(product.OrderItems.ToList(), product.QuantityAvailable);
-            return;
-         }
+         CalculateUnweightedAllocation(product.OrderItems.ToList(), product.QuantityAvailable);
 
+         
          // split up the orders
          List<OrderItem> orderItems = product.OrderItems.OrderBy(p => p.Id).ToList();
          List<OrderItem> orderItemsSimple = dbContext.Products.AsNoTracking().Single(p => p.Id == id).OrderItems.OrderBy(p => p.Id).ToList();
@@ -61,6 +65,33 @@ namespace InventoryAllocationEngine.Web.Services
          for (int i = 0; i < orderItems.Count; i++)
          {
             orderItems[i].QuantityAllocatedWeighted = orderItemsSimple[i].QuantityAllocatedWeighted + orderItemsComplex[i].QuantityAllocatedWeighted;
+         }
+
+      }
+
+      private void CalculateUnweightedAllocation(List<OrderItem> orderItems, int quantityAvailable)
+      {
+         orderItems = orderItems.OrderByDescending(oi => oi.QuantityOrdered).ToList();
+
+         int quantityOrdered = orderItems.Sum(oi => oi.QuantityOrdered);
+
+         if (quantityOrdered > 0 && quantityAvailable > 0)
+         {
+            double percentage = (double)quantityAvailable / quantityOrdered;
+
+            foreach (var orderItem in orderItems)
+            {
+               orderItem.QuantityAllocatedUnweighted = (int)(orderItem.QuantityOrdered * percentage);
+            }
+
+            int quantityAllocated = orderItems.Sum(oi => oi.QuantityAllocatedUnweighted);
+
+            int unallocated = quantityAvailable - quantityAllocated;
+
+            if (unallocated > 0)
+            {
+               orderItems.First().QuantityAllocatedUnweighted = orderItems.First().QuantityAllocatedUnweighted + unallocated;
+            }
          }
 
       }
