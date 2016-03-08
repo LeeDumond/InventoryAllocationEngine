@@ -79,9 +79,12 @@
 
    </div>
 
-
-
    <table class="table">
+      <colgroup>
+         <col span="5">
+         <col span="2" style="background-color: #EFEFEF">
+         <col span="2"style="background-color: #D7F4A8">
+      </colgroup>
       <thead>
       <tr>
          <th colspan="5">&nbsp;</th>
@@ -103,8 +106,6 @@
          <th>
             Customer
          </th>
-
-
          <th>
             Unit Price
          </th>
@@ -157,7 +158,7 @@ DUNS: @orderItem.Order.Customer.DUNSScore">@orderItem.Order.Customer.Name
                @orderItem.UnweightedExtension.ToString("C")
             </td>
             <td>
-               @orderItem.QuantityAllocatedWeighted 
+               @orderItem.QuantityAllocatedWeighted
             </td>
             <td>
                @orderItem.WeightedExtension.ToString("C")
@@ -172,7 +173,7 @@ DUNS: @orderItem.Order.Customer.DUNSScore">@orderItem.Order.Customer.Name
             @Model.OrderItems.Sum(oi => oi.QuantityOrdered)
          </th>
          <th>
-            @Model.OrderItems.Sum(oi => oi.QuantityAllocatedUnweighted) 
+            @Model.OrderItems.Sum(oi => oi.QuantityAllocatedUnweighted)
          </th>
          <th>
             @Model.OrderItems.Sum(oi => oi.UnweightedExtension).ToString("C")
