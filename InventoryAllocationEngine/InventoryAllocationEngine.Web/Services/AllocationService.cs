@@ -65,7 +65,7 @@ namespace InventoryAllocationEngine.Web.Services
          }
       }
 
-      private void CalculateUnweightedAllocation(List<OrderItem> orderItems, int quantityAvailable)
+      private static void CalculateUnweightedAllocation(List<OrderItem> orderItems, int quantityAvailable)
       {
          orderItems = orderItems.OrderByDescending(oi => oi.QuantityOrdered).ToList();
 
@@ -99,7 +99,7 @@ namespace InventoryAllocationEngine.Web.Services
          }
       }
 
-      private List<OrderItem> AllocateUnweighted(List<OrderItem> orderItems, int quantityAvailable)
+      private static List<OrderItem> AllocateUnweighted(List<OrderItem> orderItems, int quantityAvailable)
       {
          orderItems = orderItems.OrderByDescending(oi => oi.QuantityOrdered).ToList();
 
@@ -135,7 +135,7 @@ namespace InventoryAllocationEngine.Web.Services
          return orderItems.OrderBy(o => o.Id).ToList();
       }
 
-      private List<OrderItem> AllocateWeighted(List<OrderItem> orderItems, int quantityAvailable, AllocationMethod allocationMethod)
+      private static List<OrderItem> AllocateWeighted(List<OrderItem> orderItems, int quantityAvailable, AllocationMethod allocationMethod)
       {
          switch (allocationMethod)
          {
