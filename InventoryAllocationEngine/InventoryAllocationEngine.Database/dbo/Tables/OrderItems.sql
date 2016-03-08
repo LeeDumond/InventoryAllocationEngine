@@ -3,8 +3,11 @@
     [OrderId]         INT              NOT NULL,
     [ProductId]       UNIQUEIDENTIFIER NOT NULL,
     [QuantityOrdered] INT              NOT NULL,
+    [UnitPrice]       MONEY            NOT NULL,
     PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 
