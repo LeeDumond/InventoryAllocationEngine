@@ -147,6 +147,10 @@ namespace InventoryAllocationEngine.Web.Services
                orderItems = orderItems.OrderBy(oi => oi.Order.DateReceived).ToList();
                break;
 
+            case AllocationMethod.MostProfitableOrdersFirst:
+               orderItems = orderItems.OrderByDescending(oi => oi.UnitPrice).ToList();
+               break;
+
             case AllocationMethod.HighestVolumeCustomersFirst:
                orderItems = orderItems.OrderByDescending(oi => oi.Order.Customer.AverageAnnualVolume).ToList();
                break;

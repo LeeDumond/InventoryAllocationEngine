@@ -84,6 +84,16 @@
    <table class="table">
       <thead>
       <tr>
+         <th colspan="5">&nbsp;</th>
+         <th colspan="2">
+            Unweighted Allocation
+         </th>
+         <th colspan="2">
+            Weighted Allocation
+         </th>
+      </tr>
+
+      <tr>
          <th>
             Order No.
          </th>
@@ -93,16 +103,28 @@
          <th>
             Customer
          </th>
+
+
+         <th>
+            Unit Price
+         </th>
          <th>
             Qty. Ordered
          </th>
          <th>
-            Unweighted Allocation
+            Quantity
          </th>
          <th>
-            Weighted Allocation
+            Revenue
+         </th>
+         <th>
+            Quantity
+         </th>
+         <th>
+            Revenue
          </th>
       </tr>
+
       </thead>
       <tbody>
       @foreach (var orderItem in Model.OrderItems.OrderBy(oi => oi.Order.DateReceived))
@@ -121,6 +143,10 @@ AP Age: @orderItem.Order.Customer.AccountsPayableAge
 DUNS: @orderItem.Order.Customer.DUNSScore">@orderItem.Order.Customer.Name
                </span>
             </td>
+
+            <td>
+               @orderItem.UnitPrice.ToString("C")
+            </td>
             <td>
                @orderItem.QuantityOrdered
             </td>
@@ -128,22 +154,34 @@ DUNS: @orderItem.Order.Customer.DUNSScore">@orderItem.Order.Customer.Name
                @orderItem.QuantityAllocatedUnweighted
             </td>
             <td>
-               @orderItem.QuantityAllocatedWeighted
+               @orderItem.UnweightedExtension.ToString("C")
+            </td>
+            <td>
+               @orderItem.QuantityAllocatedWeighted 
+            </td>
+            <td>
+               @orderItem.WeightedExtension.ToString("C")
             </td>
          </tr>
       }
       <tr>
-         <th colspan="3" class="text-right">
+         <th colspan="4" class="text-right">
             Totals:
          </th>
          <th>
             @Model.OrderItems.Sum(oi => oi.QuantityOrdered)
          </th>
          <th>
-            @Model.OrderItems.Sum(oi => oi.QuantityAllocatedUnweighted)
+            @Model.OrderItems.Sum(oi => oi.QuantityAllocatedUnweighted) 
+         </th>
+         <th>
+            @Model.OrderItems.Sum(oi => oi.UnweightedExtension).ToString("C")
          </th>
          <th>
             @Model.OrderItems.Sum(oi => oi.QuantityAllocatedWeighted)
+         </th>
+         <th>
+            @Model.OrderItems.Sum(oi => oi.WeightedExtension).ToString("C")
          </th>
       </tr>
       </tbody>
